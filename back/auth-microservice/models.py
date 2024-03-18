@@ -10,13 +10,15 @@ class Users(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
     password = Column(String)
-    role = Column(String)
+    role_id = Column(String)
+
+    permissions = relationship("Permissions", back_populates="user")
 
 class Permissions(Base):
     __tablename__ = 'permissions'
 
     id = Column(Integer, primary_key=True, index=True)
-    id_user = Column(Integer, ForeignKey('users.id'))
-    id_zone = Column(Integer, ForeignKey('zones.id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
+    zone_id = Column(Integer, ForeignKey('zones.id'))
 
-    user = relationship("users", back_populates="permissions")
+    user = relationship("Users", back_populates="permissions")

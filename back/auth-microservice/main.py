@@ -17,30 +17,20 @@ class User(BaseModel):
     zone: int
 
 DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{database_name}"
-print(DATABASE_URL)
 engine = create_engine(DATABASE_URL)
-print(engine)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-print(SessionLocal)
 
 app = FastAPI()
 
 @app.post("/auth/")
 async def autenticar(user: User):
-    try:
-        print(user)
-        print("Ok connection")
-        db = SessionLocal()
-        user_db = db.query(Users).filter(Users.username == username, Users.password == password).first()
-        print("Query ok")
-        if not user_db:
-            raise HTTPException(status_code=401, detail="Credenciales inválidas")
+    db = SessionLocal()
+    user_db = db.query(Users).filter(Users.username == user.username, Users.password == user.password).first()
+    if not user_db:
+        raise HTTPException(status_code=401, detail="Credenciales inválidas")
 
-        permisos = db.query(Permissions).filter(Permissions.id_user == user_db.id, Permissions.id_zone == zone).first()
-        if not permisos:
-            raise HTTPException(status_code=403, detail="El usuario no tiene permisos para acceder a esta zona")
+    permisos = db.query(Permissions).filter(Permissions.user_id == user_db.id, Permissions.zone_id == user.zone).first()
+    if not permisos:
+        raise HTTPException(status_code=403, detail="El usuario no tiene permisos para acceder a esta zona")
 
-        return {"mensaje": "Autenticación exitosa"}
-    except Exception as e:
-        print("Error:", e)
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
+    return {"detail": "Autenticación exitosa"}
