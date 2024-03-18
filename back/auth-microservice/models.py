@@ -1,12 +1,22 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, ForeignKey
 
 Base = declarative_base()
 
-class Usuario(Base):
-    __tablename__ = 'usuarios'
+class Users(Base):
+    __tablename__ = 'users'
 
-    id = Column(Integer, primary_key=True)
-    nombre = Column(String)
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
     password = Column(String)
-    zona = Column(String)
+    role = Column(String)
+
+class Permissions(Base):
+    __tablename__ = 'permissions'
+
+    id = Column(Integer, primary_key=True, index=True)
+    id_user = Column(Integer, ForeignKey('users.id'))
+    id_zone = Column(Integer, ForeignKey('zones.id'))
+
+    user = relationship("users", back_populates="permissions")
