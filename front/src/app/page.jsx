@@ -88,7 +88,7 @@ export default function Home() {
           handleSecondButton={handleSecondButton}
         />
       )}
-      <main className="relative w-full h-[100vh]">
+      <main className="relative w-full h-[100vh] overflow-hidden">
         <div className="absolute inset-0">
           <img style={{ filter: 'brightness(50%)' }} className="w-full h-full" src="/bg.jpg" alt="" />
         </div>

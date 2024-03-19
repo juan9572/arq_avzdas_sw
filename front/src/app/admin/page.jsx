@@ -1,13 +1,23 @@
 'use client'
 import axios from 'axios';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Admin() {
-    const Api = process.env.NEXT_PUBLIC_API;
+    const [users, setUsers] = useState([]);
+
+
     const fetchData = async () => {
         try {
-            const response = await axios.get(Api + '/users');
-            console.log(response.data);
+            const body = {
+                url: "/users",
+                method: "get",
+            };
+
+            const { data } = await axios.post("/api/general", body);
+            const users = data.data
+            console.log(users);
+            setUsers(users);
+            console.log(data);
         } catch (error) {
             console.error(error);
         }
@@ -63,14 +73,14 @@ export default function Admin() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {/* {fetchData.map((item, index) => (
+                                {users.map((user, index) => (
                                     <tr key={index}>
-                                        <td className="border px-4 py-2 w-full">{item.name}</td>
-                                        <td className="border px-4 py-2 w-full">{item.cedula}</td>
-                                        <td className="border px-4 py-2">{item.age}</td>
-                                        <td className="border px-4 py-2">{item.email}</td>
+                                        <td className="border px-4 py-2 w-full">{user.name}</td>
+                                        <td className="border px-4 py-2 w-full">{user.cedula}</td>
+                                        <td className="border px-4 py-2">{user.age}</td>
+                                        <td className="border px-4 py-2">{user.email}</td>
                                     </tr>
-                                ))} */}
+                                ))}
                             </tbody>
                         </table>
                     </div>
