@@ -60,7 +60,7 @@ export default function Admin() {
                     </div>
                 </section>
 
-                <main className="bg-white text-black w-full min-h-[100vh] flex justify-center items-center pt-24">
+                <main className="bg-white text-black w-full min-h-[100vh] flex justify-center  pt-24">
                     <div className="w-full max-w-screen-md">
                         <h2 className="text-center mb-4 font-bold text-2xl">Listado de usuarios</h2>
                         <table className="table-auto w-full">
