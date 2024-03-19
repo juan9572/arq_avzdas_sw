@@ -7,7 +7,6 @@ const Api = process.env.NEXT_PUBLIC_API;
 
 export async function POST(req, res) {
     try {
-
         const resAxios = await fetch(Api + ``, {
             body: JSON.stringify({
                 username: Username,
@@ -20,17 +19,15 @@ export async function POST(req, res) {
             method: "POST",
         });
 
-        // // // Espera respuesta real de Api
-        // const { data } = await resAxios.json();
-        // return NextResponse.json({
-        //     ...data,
-        // });
+        if (resAxios.status != 200) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail);
+        }
 
-        //Simula respuesta de Api
-        const inventedData = [1, 2, 3, 4, 5];
+        const { data } = await resAxios.json();
+        console.log(data);
         return NextResponse.json({
-            // ...data,
-            inventedData,
+            ...data,
         });
     } catch (err) {
         console.log(err);

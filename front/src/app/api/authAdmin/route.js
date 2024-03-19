@@ -20,20 +20,15 @@ export async function POST(req, res) {
             method: "POST",
         });
 
-        // // Simulate successful response from API
-        const token = "your_token_here";
-        const data = {
-            token: token,
-        };
-        return NextResponse.json(data, {
-            status: 200,
-        });
-        // Espera respuesta real de Api
-        // const { data } = await resAxios.json();
-        // return NextResponse.json({
-        //     ...data,
-        // });
+        if (resAxios.status != 200) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail);
+        }
 
+        const { data } = await resAxios.json();
+        return NextResponse.json({
+            ...data,
+        });
 
     } catch (err) {
         console.log(err);
