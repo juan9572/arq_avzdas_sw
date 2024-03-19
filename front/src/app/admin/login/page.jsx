@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Alert from '../../components/Alert';
 import Swal from 'sweetalert2';
 
-const zonaAIngresar = process.env.NEXT_PUBLIC_ZONA_A_INGRESAR;
+const zonaAIngresar = process.env.NEXT_PUBLIC_ZONE_ID;
 
 export default function AdminLogin() {
     const [credentials, setCredentials] = useState({
@@ -61,7 +61,7 @@ export default function AdminLogin() {
                 text: "Puede ingresar a la zona",
                 open: true,
                 secondButtonText: null,
-                confirmButtonText: "Finalizar",
+                confirmButtonText: "Ingresar",
                 location: "/admin",
             }));
         } catch (err) {

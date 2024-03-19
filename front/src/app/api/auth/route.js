@@ -7,7 +7,7 @@ const Api = process.env.NEXT_PUBLIC_API;
 
 export async function POST(req, res) {
     try {
-        const resAxios = await fetch(Api + ``, {
+        const resAxios = await fetch(Api + `/auth/`, {
             body: JSON.stringify({
                 username: Username,
                 password: Password,

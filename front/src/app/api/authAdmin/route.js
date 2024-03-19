@@ -7,22 +7,22 @@ export async function POST(req, res) {
     const response = await req.json();
     console.log(response);
     try {
-        const { Username, Password, Zone } = response;
-        const resAxios = await fetch(Api + ``, {
+        const { user, password, zone } = response;
+        const resAxios = await fetch(Api + `/authAdmin/`, {
             body: JSON.stringify({
-                username: Username,
-                password: Password,
-                zone: Zone,
+                username: user,
+                password: password,
+                zone: zone,
             }),
             headers: {
                 "Content-Type": "application/json",
             },
             method: "POST",
         });
-
+        console.log(resAxios);
         if (resAxios.status != 200) {
-            const errorData = await response.json();
-            throw new Error(errorData.detail);
+            const errorText = await resAxios.text();
+            throw new Error(`Error en la solicitud al servidor: ${errorText}`);
         }
 
         const { data } = await resAxios.json();

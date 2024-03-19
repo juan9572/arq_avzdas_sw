@@ -4,11 +4,11 @@ WORKDIR /auth-microservice
 
 COPY . /auth-microservice
 
-ENV RDS_HOST "xxxx"
-ENV RDS_PORT "xxxx"
-ENV RDS_USER "xxxx"
-ENV RDS_PASSWORD "xxxx"
-ENV RDS_DATABASE "xxxx"
+ENV RDS_HOST "users-1.clm602cmcvfu.us-east-1.rds.amazonaws.com"
+ENV RDS_PORT "5432"
+ENV RDS_USER "admin_db_rds"
+ENV RDS_PASSWORD "7aA1shW-"
+ENV RDS_DATABASE "postgres"
 
 RUN apk add build-base && apk add libpq postgresql-dev
 
