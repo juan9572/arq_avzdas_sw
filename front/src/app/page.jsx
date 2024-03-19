@@ -42,6 +42,8 @@ export default function Home() {
       }
     });
     try {
+      // const credentials = {Username:'admin_aeropuerto', Password:'adminpass', Zone:1};
+      // const { data } = await axios.post('/api/authAdmin', credentials);
       const { data } = await axios.post('/api/auth');
       console.log(data);
       Swal.close()

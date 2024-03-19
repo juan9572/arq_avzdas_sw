@@ -16,11 +16,30 @@ class User(BaseModel):
     password: str
     zone: int
 
+class AuthSuccess(BaseModel):
+    detail: str = "Autenticación exitosa"
+
 DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{database_name}"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 app = FastAPI()
+
+@app.post("/authAdmin/")
+async def autenticarAdmin(admin: User):
+    db = SessionLocal()
+    user_db = db.query(Users).filter(Users.username == admin.username, Users.password == admin.password).first()
+    if not user_db:
+        raise HTTPException(status_code=401, detail="Credenciales inválidas")
+
+    if user_db.role.name != 'Administrador':
+        raise HTTPException(status_code=403, detail="No tiene permisos de administrador")
+
+    permisos = db.query(Permissions).filter(Permissions.user_id == user_db.id, Permissions.zone_id == admin.zone).first()
+    if not permisos:
+        raise HTTPException(status_code=403, detail="El usuario no tiene permisos para acceder a esta zona")
+
+    return AuthSuccess()
 
 @app.post("/auth/")
 async def autenticar(user: User):
@@ -33,4 +52,4 @@ async def autenticar(user: User):
     if not permisos:
         raise HTTPException(status_code=403, detail="El usuario no tiene permisos para acceder a esta zona")
 
-    return {"detail": "Autenticación exitosa"}
+    return AuthSuccess()
