@@ -14,6 +14,10 @@ CREATE TABLE roles (
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
+    "name" VARCHAR(255) NOT NULL,
+    "cedula" VARCHAR(255) NOT NULL,
+    "age" INTEGER NOT NULL,
+    "email" VARCHAR(255) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
     "role_id" INT NOT NULL,
     FOREIGN KEY ("role_id") REFERENCES roles(id)
@@ -54,12 +58,12 @@ INSERT INTO zones ("name") VALUES
 ('Zona de Control de Seguridad');
 
 -- Ingresar usuarios
-INSERT INTO users (username, "password", role_id) VALUES
-('admin_aeropuerto', 'adminpass', 1),
-('empleado1', 'emppass1', 2),
-('empleado2', 'emppass2', 2),
-('pasajero1', 'pass1', 3),
-('pasajero2', 'pass2', 3);
+INSERT INTO users (username, "name", "cedula", "age", "email", "password", role_id) VALUES
+('admin_aeropuerto', 'Admin Aeropuerto', '123456789', 40, 'admin@aeropuerto.com', 'adminpass', 1),
+('empleado1', 'Pedro Pérez', '987654321', 30, 'pedro@example.com', 'emppass1', 2),
+('empleado2', 'María Gómez', '456789123', 35, 'maria@example.com', 'emppass2', 2),
+('pasajero1', 'Juan Rodríguez', '789123456', 25, 'juan@example.com', 'pass1', 3),
+('pasajero2', 'Ana Martínez', '654987321', 28, 'ana@example.com', 'pass2', 3);
 
 -- Ingresar permisos
 INSERT INTO permissions (user_id, zone_id) VALUES

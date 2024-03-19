@@ -10,6 +10,10 @@ class Users(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
     password = Column(String)
+    name = Column(String)
+    cedula = Column(String)
+    age = Column(Integer)
+    email = Column(String)
     role_id = Column(Integer, ForeignKey('roles.id'))
 
     permissions = relationship("Permissions", back_populates="user")
