@@ -27,9 +27,18 @@ class Permissions(Base):
     zone_id = Column(Integer, ForeignKey('zones.id'))
 
     user = relationship("Users", back_populates="permissions")
+    zone = relationship("Zones", back_populates="permissions")
 
 class Roles(Base):
     __tablename__ = 'roles'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
+
+class Zones(Base):
+    __tablename__ = 'zones'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+
+    permissions = relationship("Permissions", back_populates="zone")

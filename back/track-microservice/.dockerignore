@@ -1,0 +1,33 @@
+# Ignorar archivos y directorios específicos
+__pycache__
+*.pyc
+*.pyo
+
+#Archivo de dockefile
+Dockefile
+
+# Ignorar archivos generados por el entorno de desarrollo
+.idea/
+.vscode/
+*.swp
+
+# Ignorar archivos y directorios de dependencias y entornos virtuales
+venv/
+env/
+*.env
+
+# Ignorar archivos de registros y caché
+*.log
+*.cache
+*.json
+*.sqlite3
+
+# Ignorar archivos de configuración local
+config_local.py
+
+# Ignorar archivos de pruebas y cobertura de código
+.coverage
+htmlcov/
+
+# Ignorar archivos de paquetes de dependencias
+node_modules/
