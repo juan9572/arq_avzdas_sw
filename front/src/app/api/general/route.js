@@ -41,20 +41,19 @@ export async function POST(req, res) {
             );
         }
 
-        const path = `${process.env.NEXT_PUBLIC_API}${url}`;
+        const path = `${process.env.NEXT_PUBLIC_API2}${url}`;
 
         const { data } = await axios?.[method](path, body);
         console.log(data, "DATAAA");
         // Print the API response
         console.log(data, "DATAAA");
+
         // Print the API response
         return NextResponse.json(
             {
                 message: data?.message || "Success",
                 data: data,
             },
-            {
-            }
         );
         const message = data?.message || "Success";
         const response = data?.data || {};
@@ -69,14 +68,14 @@ export async function POST(req, res) {
             }
         );
     } catch (error) {
-        const { endStatus, endMessage, endError } = createError(error);
         return NextResponse.json(
             {
-                status: endStatus,
-                message: endMessage,
-                error: endError,
+                status: 500,
+                message: error.message,
             },
-            { status: endStatus }
+            {
+                status: 500,
+            }
         );
     }
 }

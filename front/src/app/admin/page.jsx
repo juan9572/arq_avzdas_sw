@@ -2,14 +2,66 @@
 import axios from 'axios';
 import { useEffect, useState } from "react";
 
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Button from "@mui/material/Button";
+import Swal from 'sweetalert2';
+
 export default function Admin() {
     const [users, setUsers] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [user, setUser] = useState({});
+    const [userInfo, setUserInfo] = useState([]);
+
+    const fetchUserData = async (user, index) => {
+        Swal.fire({
+            title: "Obteniendo info del usuario",
+            timerProgressBar: true,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        try {
+            const body = {
+                url: `8001/trackUser/?user_id=${index}`,
+                method: "get",
+            };
+            Swal.close()
+            const { data } = await axios.post("/api/general", body);
+            console.log(data, "data");
+            return data.data;
+        } catch (error) {
+            Swal.close()
+            console.error(error);
+            return null;
+        }
+    };
+
+    const handleClickOpen = async (user, index) => {
+        console.log(user, "USERRrr", index);
+        setOpen(true);
+        setUser(user);
+        const userData = await fetchUserData(user, index);
+        if (userData) {
+            setUserInfo(userData);
+        } else {
+            console.log("No se pudo obtener la información del usuario");
+        }
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
 
     const fetchData = async () => {
         try {
             const body = {
-                url: "/users",
+                url: "8000/users",
                 method: "get",
             };
 
@@ -75,7 +127,7 @@ export default function Admin() {
                             <tbody>
                                 {users.map((user, index) => (
                                     <tr key={index}>
-                                        <td className="border px-4 py-2 w-full">{user.name}</td>
+                                        <td onClick={() => handleClickOpen(user, index)} className="border px-4 py-2 w-full hover:cursor-pointer hover:bg-gray-300">{user.name}</td>
                                         <td className="border px-4 py-2 w-full">{user.cedula}</td>
                                         <td className="border px-4 py-2">{user.age}</td>
                                         <td className="border px-4 py-2">{user.email}</td>
@@ -86,7 +138,53 @@ export default function Admin() {
                     </div>
                 </main>
             </div>
-
+            <div>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="draggable-dialog-title"
+                    fullWidth
+                >
+                    <DialogTitle
+                        style={{ cursor: "move", textAlign: "center" }}
+                        id="draggable-dialog-title"
+                    >
+                        <h4>Rastreo del usuario</h4>
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText >
+                            <section className='flex justify-center'>
+                                <p>Nombre: {user.name}</p>
+                            </section>
+                            <div className='mt-6'>
+                                <table className="table-auto w-full">
+                                    <thead>
+                                        <tr>
+                                            <th className="border px-4 py-2">Nombre</th>
+                                            <th className="border px-4 py-2">Zona</th>
+                                            <th className="border px-4 py-2">Acceso</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {userInfo.map((info, index) => (
+                                            <tr key={index}>
+                                                <td className="border px-4 py-2">{info.name}</td>
+                                                <td className="border px-4 py-2">{info.zone_name}</td>
+                                                <td className="border px-4 py-2">{info.status_access}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>
+                            Cerrar
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
         </>
     )
 }
