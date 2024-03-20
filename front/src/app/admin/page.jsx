@@ -170,7 +170,10 @@ export default function Admin() {
                                             <tr key={index}>
                                                 <td className="border px-4 py-2">{info.name}</td>
                                                 <td className="border px-4 py-2">{info.zone_name}</td>
-                                                <td className="border px-4 py-2">{info.status_access}</td>
+                                                <td className="border px-4 py-2">{info.status_access === 'Acceso concedido' ?
+                                                    <span className="text-green-500">{info.status_access}</span> :
+                                                    <span className="text-red-500">{info.status_access}</span>
+                                                }</td>
                                             </tr>
                                         ))}
                                     </tbody>
