@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models import Users, Permissions, Zones
 
-def get_users(db: Session) -> List[User]:
+def get_users(db: Session) -> List[Users]:
     return db.query(Users).order_by(Users.id).all()
 
 def authenticate_user(db: Session, user: User) -> User:

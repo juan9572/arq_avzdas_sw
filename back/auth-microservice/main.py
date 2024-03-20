@@ -22,5 +22,5 @@ async def authenticate(user: User, db: Session = Depends(get_db)):
 @app.get("/users/", response_model=List[UserResponse])
 async def get_all_users(db: Session = Depends(get_db)):
     query_users = get_users(db)
-    return [UserResponse(name=user.name, cedula=user.cedula, age=user.age, email=user.email)
+    return [UserResponse(id=user.id, name=user.name, cedula=user.cedula, age=user.age, email=user.email)
              for user in query_users]

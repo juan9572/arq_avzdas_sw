@@ -9,6 +9,7 @@ class User(BaseModel):
     zone: int
 
 class UserResponse(BaseModel):
+    id: int
     name: str
     cedula: str
     age: int
