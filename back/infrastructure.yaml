@@ -1,0 +1,293 @@
+# minikube addons enable metrics-server
+# minikube addons enable ingress
+# minikube addons enable ingress-dns
+# minikube tunnel
+# |-------------------------------------------------------------------------------------------|
+# |================================ auth-microservice ========================================|
+# |-------------------------------------------------------------------------------------------|
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-microservice
+  namespace: default
+  labels:
+    app: auth-microservice
+spec:
+  selector:
+    matchLabels:
+      app: auth-microservice
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  auth-microservice
+    spec:
+      containers:
+      - name: auth-microservice
+        image: auth-service:1.0
+        env:
+        - name: RDS_HOST_AUTH
+          valueFrom:
+            secretKeyRef:
+              name: secret-vars
+              key: rds-host-a
+        - name: RDS_PORT_AUTH
+          value: "5432"
+        - name: RDS_USER_AUTH
+          valueFrom:
+            secretKeyRef:
+              name: secret-vars
+              key: rds-user-a
+        - name: RDS_PASSWORD_AUTH
+          valueFrom:
+            secretKeyRef:
+              name: secret-vars
+              key: rds-password-a
+        - name: RDS_DATABASE_AUTH
+          value: "postgres"
+        resources:
+          requests:
+            memory: 400Mi
+            cpu: 200m
+          limits:
+            memory: 800Mi
+            cpu: 400m
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /users/
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        ports:
+        - containerPort:  80
+          name:  auth
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-micro-svc
+  namespace: default
+spec:
+  selector:
+    app: auth-microservice
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+  type: ClusterIP
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: auth-microservice-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: auth-microservice
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 70
+
+# |-------------------------------------------------------------------------------------------|
+# |================================ track-microservice =======================================|
+# |-------------------------------------------------------------------------------------------|
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: track-microservice
+  namespace: default
+  labels:
+    app: track-microservice
+spec:
+  selector:
+    matchLabels:
+      app: track-microservice
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: track-microservice
+    spec:
+      containers:
+      - name: track-microservice
+        image: track-microservice:1.0
+        env:
+        - name: RDS_HOST_TRACK
+          valueFrom:
+            secretKeyRef:
+              name: secret-vars
+              key: rds-host-t
+        - name: RDS_PORT_TRACK
+          value: "5432"
+        - name: RDS_USER_TRACK
+          valueFrom:
+            secretKeyRef:
+              name: secret-vars
+              key: rds-user-t
+        - name: RDS_PASSWORD_TRACK
+          valueFrom:
+            secretKeyRef:
+              name: secret-vars
+              key: rds-password-t
+        - name: RDS_DATABASE_TRACK
+          value: "postgres"
+        resources:
+          requests:
+            memory: 400Mi
+            cpu: 200m
+          limits:
+            memory: 800Mi
+            cpu: 400m
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /trackUser/?user_id=1
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        ports:
+        - containerPort:  80
+          name:  track
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: track-micro-svc
+  namespace: default
+spec:
+  selector:
+    app: track-microservice
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80
+  type: ClusterIP
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: track-microservice-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: track-microservice
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 70
+
+# |-------------------------------------------------------------------------------------------|
+# |======================================== ingress ==========================================|
+# |-------------------------------------------------------------------------------------------|
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: microservices-ingress
+  namespace: default
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /auth
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-micro-svc
+            port:
+              number: 80
+      - path: /authAdmin
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-micro-svc
+            port:
+              number: 80
+      - path: /users
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-micro-svc
+            port:
+              number: 80
+      - path: /trackAccess
+        pathType: Prefix
+        backend:
+          service:
+            name: track-micro-svc
+            port:
+              number: 80
+      - path: /trackUser
+        pathType: Prefix
+        backend:
+          service:
+            name: track-micro-svc
+            port:
+              number: 80
