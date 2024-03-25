@@ -41,7 +41,7 @@ export async function POST(req, res) {
             );
         }
 
-        const path = `${process.env.NEXT_PUBLIC_API2}${url}`;
+        const path = `${process.env.NEXT_PUBLIC_API}${url}`;
 
         const { data } = await axios?.[method](path, body);
         console.log(data, "DATAAA");

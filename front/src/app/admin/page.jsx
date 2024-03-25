@@ -27,7 +27,7 @@ export default function Admin() {
         });
         try {
             const body = {
-                url: `8001/trackUser/?user_id=${index}`,
+                url: `/trackUser/?user_id=${index + 1}`,
                 method: "get",
             };
             Swal.close()
@@ -61,7 +61,7 @@ export default function Admin() {
     const fetchData = async () => {
         try {
             const body = {
-                url: "8000/users",
+                url: "/users",
                 method: "get",
             };
 
@@ -170,7 +170,7 @@ export default function Admin() {
                                             <tr key={index}>
                                                 <td className="border px-4 py-2">{info.name}</td>
                                                 <td className="border px-4 py-2">{info.zone_name}</td>
-                                                <td className="border px-4 py-2">{info.status_access === 'Acceso concedido' ?
+                                                <td className="border px-4 py-2">{info.status_access === 'ACCESO AUTORIZADO' ?
                                                     <span className="text-green-500">{info.status_access}</span> :
                                                     <span className="text-red-500">{info.status_access}</span>
                                                 }</td>

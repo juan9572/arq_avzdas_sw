@@ -4,13 +4,11 @@ import { useState } from 'react';
 import Alert from '../../components/Alert';
 import Swal from 'sweetalert2';
 
-const zonaAIngresar = process.env.NEXT_PUBLIC_ZONE_ID;
-
 export default function AdminLogin() {
     const [credentials, setCredentials] = useState({
         user: "",
         password: "",
-        zone: zonaAIngresar,
+        zone: 1,
     });
     const [alert, setAlert] = useState({
         open: false,
