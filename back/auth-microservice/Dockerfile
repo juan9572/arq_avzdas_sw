@@ -4,12 +4,6 @@ WORKDIR /auth-microservice
 
 COPY . /auth-microservice
 
-ENV RDS_HOST "xxxxx"
-ENV RDS_PORT "xxxxx"
-ENV RDS_USER "xxxxx"
-ENV RDS_PASSWORD "xxxxx"
-ENV RDS_DATABASE "xxxxx"
-
 RUN apk add build-base && apk add libpq postgresql-dev
 
 RUN pip install --no-cache-dir --upgrade -r /auth-microservice/requirements.txt

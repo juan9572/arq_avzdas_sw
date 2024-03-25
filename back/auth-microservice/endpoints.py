@@ -33,9 +33,13 @@ def check_user_permissions(db: Session, user: User, zone_id: int):
         "zone_name": zone.name,
         "status_access": "ACCESO AUTORIZADO" if permissions else "ACCESO DENEGADO"
     }
-    print(data)
-    # endpoint_url = "http://direccion_del_otro_endpoint" #TODO
-    # response = requests.post(endpoint_url, json=data)
+    endpoint_url = "http://10.108.94.112/trackAccess/"
+
+    try:
+        response = requests.post(endpoint_url, json=data)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        raise HTTPException(status_code=500, detail="Error al comunicarse con el servicio track-service") from e
 
     if not permissions:
         raise HTTPException(status_code=403, detail="El usuario no tiene permisos para acceder a esta zona")
